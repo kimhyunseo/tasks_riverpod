@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:tasks/data/model/todo_entity.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasks/ui/pages/write_todo/write_todo_view_model.dart';
 
 // 4. Todo를 추가하는 화면 만들기
-class PlusTodo extends StatefulWidget {
-  const PlusTodo({super.key, required this.onCreate});
-  final void Function(ToDoEntity) onCreate;
+class PlusTodo extends ConsumerStatefulWidget {
+  const PlusTodo({super.key});
   @override
-  State<PlusTodo> createState() => _PlusTodoState();
+  ConsumerState<PlusTodo> createState() => _PlusTodoState();
 }
 
-class _PlusTodoState extends State<PlusTodo> {
+class _PlusTodoState extends ConsumerState<PlusTodo> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
 
@@ -31,7 +31,7 @@ class _PlusTodoState extends State<PlusTodo> {
   }
 
   // 할 일 추가할 때 사용자 값이 비어있으면 동작하지 않게 구현
-  void saveToDo() {
+  void saveToDo() async {
     final value = titleController.text;
     final descriptionValue = descriptionController.text;
 
@@ -40,14 +40,9 @@ class _PlusTodoState extends State<PlusTodo> {
       return;
     }
 
-    widget.onCreate(
-      ToDoEntity(
-        id: DateTime.now().microsecondsSinceEpoch.toString(),
-        title: value,
-        isFavorite: isFavorite,
-        description: descriptionValue.isNotEmpty ? descriptionValue : null,
-      ),
-    );
+    final viewModel = ref.read(writeTodoViewModel(null).notifier);
+    await viewModel.addToDo(id: DateTime.now().toIso8601String(), title: value);
+
     Navigator.pop(context);
   }
 

@@ -1,17 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tasks/data/model/todo_entity.dart';
 
 class ToDoWidget extends StatelessWidget {
-  const ToDoWidget({
-    super.key,
-    required this.todo,
-    required this.onToggleFavorite,
-    required this.onToggleDone,
-  });
-
-  final ToDoEntity todo;
-  final VoidCallback onToggleFavorite;
-  final VoidCallback onToggleDone;
+  const ToDoWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +17,10 @@ class ToDoWidget extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            onPressed: onToggleDone,
+            onPressed: () {},
             icon: Icon(
-              todo.isDone ? Icons.check_circle_rounded : Icons.circle_outlined,
+              // todo.isDone ? Icons.check_circle_rounded : Icons.circle_outlined,
+              Icons.circle_outlined,
               size: 24,
             ),
           ),
@@ -37,24 +28,22 @@ class ToDoWidget extends StatelessWidget {
 
           Expanded(
             child: Text(
+              '제목 들어갈 부분',
               overflow: TextOverflow.ellipsis,
-              todo.title,
               style: TextStyle(
-                // 5-1 Done 상태에 따라 취소선 상태 적용
-                decoration: todo.isDone
-                    ? TextDecoration.lineThrough
-                    : TextDecoration.none,
+                // decoration: todo.isDone
+                //     ? TextDecoration.lineThrough
+                //     : TextDecoration.none,
               ),
             ),
           ),
           // 5-1. 버튼이 눌렸을 때 favorite 상태 변경
           IconButton(
-            onPressed: () {
-              onToggleFavorite();
-            },
-            icon: todo.isFavorite
-                ? Icon(Icons.star_rounded, size: 28)
-                : Icon(Icons.star_border_rounded, size: 28),
+            onPressed: () {},
+            // icon: todo.isFavorite
+            //     ? Icon(Icons.star_rounded, size: 28)
+            //     : Icon(Icons.star_border_rounded, size: 28),
+            icon: Icon(Icons.star_rounded, size: 28),
           ),
         ],
       ),

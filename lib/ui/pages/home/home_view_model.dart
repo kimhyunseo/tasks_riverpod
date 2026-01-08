@@ -17,5 +17,5 @@ class HomeViewModel extends Notifier<List<ToDoEntity>> {
 }
 
 final homeViewModel = NotifierProvider<HomeViewModel, List<ToDoEntity>>(() {
-  return homeViewModel;
+  return HomeViewModel();
 });

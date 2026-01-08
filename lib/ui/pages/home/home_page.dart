@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasks/ui/pages/home/home_view_model.dart';
 import 'package:tasks/ui/pages/home/widgets/empty_todo.dart';
 import 'package:tasks/ui/pages/write_todo/write_todo.dart';
-import 'package:tasks/data/model/todo_entity.dart';
 import 'package:tasks/ui/pages/todo_list/todo_list_page.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({
     super.key,
     required this.toggleTheme,
@@ -14,73 +15,65 @@ class HomePage extends StatefulWidget {
   final ThemeMode themeMode;
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   final String appName = 'Hyunseo\'s Tasks';
-  List<ToDoEntity> todoList = [];
+  // List<ToDoEntity> todoList = [];
 
-  void onCreate(ToDoEntity newTodo) {
-    setState(() {
-      todoList.add(newTodo);
-    });
-  }
+  // void onCreate(ToDoEntity newTodo) {
+  //   setState(() {
+  //     todoList.add(newTodo);
+  //   });
+  // }
 
-  void toggleFavorite(String id) {
-    final todoIndex = todoList.indexWhere((todo) => todo.id == id);
-    if (todoIndex == -1) return;
+  // void toggleFavorite(String id) {
+  //   final todoIndex = todoList.indexWhere((todo) => todo.id == id);
+  //   if (todoIndex == -1) return;
 
-    setState(() {
-      todoList[todoIndex] = todoList[todoIndex].copyWith(
-        id: todoList[todoIndex].id,
-        isFavorite: !todoList[todoIndex].isFavorite,
-      );
-    });
-  }
+  //   setState(() {
+  //     todoList[todoIndex] = todoList[todoIndex].copyWith(
+  //       id: todoList[todoIndex].id,
+  //       isFavorite: !todoList[todoIndex].isFavorite,
+  //     );
+  //   });
+  // }
 
-  void toggleDone(String id) {
-    final todoIndex = todoList.indexWhere((todo) => todo.id == id);
-    if (todoIndex == -1) return;
-    setState(() {
-      todoList[todoIndex] = todoList[todoIndex].copyWith(
-        id: todoList[todoIndex].id,
-        isDone: !todoList[todoIndex].isDone,
-      );
-    });
-  }
+  // void toggleDone(String id) {
+  //   final todoIndex = todoList.indexWhere((todo) => todo.id == id);
+  //   if (todoIndex == -1) return;
+  //   setState(() {
+  //     todoList[todoIndex] = todoList[todoIndex].copyWith(
+  //       id: todoList[todoIndex].id,
+  //       isDone: !todoList[todoIndex].isDone,
+  //     );
+  //   });
+  // }
 
-  void deleteTodo(String id) {
-    final todoIndex = todoList.indexWhere((todo) => todo.id == id);
-    if (todoIndex == -1) return;
-    setState(() {
-      todoList.removeAt(todoIndex);
-    });
-  }
+  // void deleteTodo(String id) {
+  //   final todoIndex = todoList.indexWhere((todo) => todo.id == id);
+  //   if (todoIndex == -1) return;
+  //   setState(() {
+  //     todoList.removeAt(todoIndex);
+  //   });
+  // }
 
-  void editTodo(String id, String editTitle, String editDescription) {
-    final todoIndex = todoList.indexWhere((todo) => todo.id == id);
-    if (todoIndex == -1) return;
-    setState(() {
-      todoList[todoIndex] = todoList[todoIndex].copyWith(
-        id: todoList[todoIndex].id,
-        title: editTitle,
-        description: editDescription,
-      );
-    });
-  }
-
-  // Todo 추가하는 화면으로 넘어가는 함수
-  void addTodo() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => PlusTodo(onCreate: onCreate),
-    );
-  }
+  // void editTodo(String id, String editTitle, String editDescription) {
+  //   final todoIndex = todoList.indexWhere((todo) => todo.id == id);
+  //   if (todoIndex == -1) return;
+  //   setState(() {
+  //     todoList[todoIndex] = todoList[todoIndex].copyWith(
+  //       id: todoList[todoIndex].id,
+  //       title: editTitle,
+  //       description: editDescription,
+  //     );
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final homeState = ref.watch(homeViewModel);
     final isLight = widget.themeMode == ThemeMode.light;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -102,7 +95,11 @@ class _HomePageState extends State<HomePage> {
       // 3-3 theme에서 버튼 모양과 색 적용 및 addTodo 함수 연결
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          addTodo();
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => PlusTodo(),
+          );
         },
         child: Icon(Icons.add),
       ),
@@ -110,17 +107,9 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           // 5-1 To DO가 없을 떄는 처음 만들었는 3번에서 만든 위젯 있을 때는 TodoView가 보이게 구현
-          todoList.isEmpty
+          homeState.isEmpty
               ? EmptyTodo(appName: appName)
-              : Expanded(
-                  child: TodoView(
-                    todoList: todoList,
-                    onToggleDone: toggleDone,
-                    onToggleFavorite: toggleFavorite,
-                    deleteTodo: deleteTodo,
-                    editTodo: editTodo,
-                  ),
-                ),
+              : Expanded(child: TodoView()),
         ],
       ),
     );

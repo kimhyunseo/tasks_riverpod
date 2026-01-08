@@ -1,22 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tasks/data/model/todo_entity.dart';
 
 // 6. To DO 상세 보기 화면 만들기
 class TodoDetailPage extends StatefulWidget {
-  const TodoDetailPage({
-    super.key,
-    required this.todoList,
-    required this.index,
-    required this.onToggleFavorite,
-    required this.deleteTodo,
-    required this.editTodo,
-  });
-  final List<ToDoEntity> todoList;
-  final int index;
-  final VoidCallback onToggleFavorite;
-  final VoidCallback deleteTodo;
-  final void Function(String, String, String) editTodo;
+  const TodoDetailPage({super.key});
 
   @override
   State<TodoDetailPage> createState() => _TodoDetailPageState();
@@ -29,12 +16,8 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
   @override
   void initState() {
     super.initState();
-    titleController = TextEditingController(
-      text: widget.todoList[widget.index].title,
-    );
-    descriptionController = TextEditingController(
-      text: widget.todoList[widget.index].description ?? "",
-    );
+    titleController = TextEditingController(text: "제목 들어갈 부분");
+    descriptionController = TextEditingController(text: "설명 들어갈 부분");
   }
 
   // 수정한 할 일 저장 함수
@@ -53,14 +36,7 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
           ),
           CupertinoDialogAction(
             isDestructiveAction: true,
-            onPressed: () {
-              widget.editTodo(
-                widget.todoList[widget.index].id,
-                titleController.text,
-                descriptionController.text,
-              );
-              Navigator.pop(context);
-            },
+            onPressed: () {},
             child: Text("저장"),
           ),
         ],
@@ -84,11 +60,7 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
           ),
           CupertinoDialogAction(
             isDestructiveAction: true,
-            onPressed: () {
-              widget.deleteTodo();
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
+            onPressed: () {},
             child: Text("삭제"),
           ),
         ],
@@ -116,10 +88,11 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
         actions: [
           // 6-1.  favorite 변경 구현
           IconButton(
-            onPressed: widget.onToggleFavorite,
-            icon: widget.todoList[widget.index].isFavorite
-                ? Icon(Icons.star_rounded, size: 28)
-                : Icon(Icons.star_border_rounded, size: 28),
+            onPressed: () {},
+            // icon: widget.todoList[widget.index].isFavorite
+            //     ? Icon(Icons.star_rounded, size: 28)
+            //     : Icon(Icons.star_border_rounded, size: 28),
+            icon: Icon(Icons.star_border_rounded, size: 28),
           ),
           IconButton(
             onPressed: () {
