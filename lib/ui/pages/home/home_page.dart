@@ -1,0 +1,134 @@
+import 'package:flutter/material.dart';
+import 'package:tasks/ui/pages/home/widgets/empty_todo.dart';
+import 'package:tasks/ui/pages/home/widgets/plus_todo.dart';
+import 'package:tasks/data/model/todo_entity.dart';
+import 'package:tasks/ui/pages/home/widgets/todo_view.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({
+    super.key,
+    required this.toggleTheme,
+    required this.themeMode,
+  });
+  final void Function() toggleTheme;
+  final ThemeMode themeMode;
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  // 3-1 title에 수강생 이름 넣기
+  final String appName = 'Hyunseo\'s Tasks';
+  List<ToDoEntity> todoList = [];
+
+  // ToDoEntity 클래스를 사용해 할 일 추가 함수
+  void onCreate(ToDoEntity newTodo) {
+    setState(() {
+      todoList.add(newTodo);
+    });
+  }
+
+  // 즐겨찾기 토글 함수
+  void toggleFavorite(String id) {
+    final todoIndex = todoList.indexWhere((todo) => todo.id == id);
+    if (todoIndex == -1) return;
+
+    setState(() {
+      todoList[todoIndex] = todoList[todoIndex].copyWith(
+        id: todoList[todoIndex].id,
+        isFavorite: !todoList[todoIndex].isFavorite,
+      );
+    });
+  }
+
+  // Todo 완료 토글 함수
+  void toggleDone(String id) {
+    final todoIndex = todoList.indexWhere((todo) => todo.id == id);
+    if (todoIndex == -1) return;
+    setState(() {
+      todoList[todoIndex] = todoList[todoIndex].copyWith(
+        id: todoList[todoIndex].id,
+        isDone: !todoList[todoIndex].isDone,
+      );
+    });
+  }
+
+  //  Todo 삭제 함수
+  void deleteTodo(String id) {
+    final todoIndex = todoList.indexWhere((todo) => todo.id == id);
+    if (todoIndex == -1) return;
+    setState(() {
+      todoList.removeAt(todoIndex);
+    });
+  }
+
+  //  Todo 수정 함수
+  void editTodo(String id, String editTitle, String editDescription) {
+    final todoIndex = todoList.indexWhere((todo) => todo.id == id);
+    if (todoIndex == -1) return;
+    setState(() {
+      todoList[todoIndex] = todoList[todoIndex].copyWith(
+        id: todoList[todoIndex].id,
+        title: editTitle,
+        description: editDescription,
+      );
+    });
+  }
+
+  // Todo 추가하는 화면으로 넘어가는 함수
+  void addTodo() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => PlusTodo(onCreate: onCreate),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isLight = widget.themeMode == ThemeMode.light;
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: Text(
+          appName,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              widget.toggleTheme();
+            },
+
+            icon: Icon(isLight ? Icons.nightlight : Icons.sunny),
+          ),
+        ],
+      ),
+      // 3-3 theme에서 버튼 모양과 색 적용 및 addTodo 함수 연결
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          addTodo();
+        },
+        child: Icon(Icons.add),
+      ),
+
+      body: Column(
+        children: [
+          // 5-1 To DO가 없을 떄는 처음 만들었는 3번에서 만든 위젯 있을 때는 TodoView가 보이게 구현
+          todoList.isEmpty
+              ? EmptyTodo(appName: appName)
+              : Expanded(
+                  child: TodoView(
+                    todoList: todoList,
+                    onToggleDone: toggleDone,
+                    onToggleFavorite: toggleFavorite,
+                    deleteTodo: deleteTodo,
+                    editTodo: editTodo,
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+}
