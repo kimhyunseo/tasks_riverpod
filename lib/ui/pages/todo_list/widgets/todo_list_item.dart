@@ -35,18 +35,18 @@ class ToDoWidget extends StatelessWidget {
           ),
           SizedBox(width: 12),
 
-          Text(
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            todo.title,
-            style: TextStyle(
-              // 5-1 Done 상태에 따라 취소선 상태 적용
-              decoration: todo.isDone
-                  ? TextDecoration.lineThrough
-                  : TextDecoration.none,
+          Expanded(
+            child: Text(
+              overflow: TextOverflow.ellipsis,
+              todo.title,
+              style: TextStyle(
+                // 5-1 Done 상태에 따라 취소선 상태 적용
+                decoration: todo.isDone
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+              ),
             ),
           ),
-          Spacer(),
           // 5-1. 버튼이 눌렸을 때 favorite 상태 변경
           IconButton(
             onPressed: () {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tasks/ui/pages/home/widgets/empty_todo.dart';
-import 'package:tasks/ui/pages/home/widgets/plus_todo.dart';
+import 'package:tasks/ui/pages/write_todo/write_todo.dart';
 import 'package:tasks/data/model/todo_entity.dart';
-import 'package:tasks/ui/pages/home/widgets/todo_view.dart';
+import 'package:tasks/ui/pages/todo_list/todo_list_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -18,18 +18,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // 3-1 title에 수강생 이름 넣기
   final String appName = 'Hyunseo\'s Tasks';
   List<ToDoEntity> todoList = [];
 
-  // ToDoEntity 클래스를 사용해 할 일 추가 함수
   void onCreate(ToDoEntity newTodo) {
     setState(() {
       todoList.add(newTodo);
     });
   }
 
-  // 즐겨찾기 토글 함수
   void toggleFavorite(String id) {
     final todoIndex = todoList.indexWhere((todo) => todo.id == id);
     if (todoIndex == -1) return;
@@ -42,7 +39,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Todo 완료 토글 함수
   void toggleDone(String id) {
     final todoIndex = todoList.indexWhere((todo) => todo.id == id);
     if (todoIndex == -1) return;
@@ -54,7 +50,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  //  Todo 삭제 함수
   void deleteTodo(String id) {
     final todoIndex = todoList.indexWhere((todo) => todo.id == id);
     if (todoIndex == -1) return;
@@ -63,7 +58,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  //  Todo 수정 함수
   void editTodo(String id, String editTitle, String editDescription) {
     final todoIndex = todoList.indexWhere((todo) => todo.id == id);
     if (todoIndex == -1) return;
