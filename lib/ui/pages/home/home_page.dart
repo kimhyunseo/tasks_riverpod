@@ -20,56 +20,6 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   final String appName = 'Hyunseo\'s Tasks';
-  // List<ToDoEntity> todoList = [];
-
-  // void onCreate(ToDoEntity newTodo) {
-  //   setState(() {
-  //     todoList.add(newTodo);
-  //   });
-  // }
-
-  // void toggleFavorite(String id) {
-  //   final todoIndex = todoList.indexWhere((todo) => todo.id == id);
-  //   if (todoIndex == -1) return;
-
-  //   setState(() {
-  //     todoList[todoIndex] = todoList[todoIndex].copyWith(
-  //       id: todoList[todoIndex].id,
-  //       isFavorite: !todoList[todoIndex].isFavorite,
-  //     );
-  //   });
-  // }
-
-  // void toggleDone(String id) {
-  //   final todoIndex = todoList.indexWhere((todo) => todo.id == id);
-  //   if (todoIndex == -1) return;
-  //   setState(() {
-  //     todoList[todoIndex] = todoList[todoIndex].copyWith(
-  //       id: todoList[todoIndex].id,
-  //       isDone: !todoList[todoIndex].isDone,
-  //     );
-  //   });
-  // }
-
-  // void deleteTodo(String id) {
-  //   final todoIndex = todoList.indexWhere((todo) => todo.id == id);
-  //   if (todoIndex == -1) return;
-  //   setState(() {
-  //     todoList.removeAt(todoIndex);
-  //   });
-  // }
-
-  // void editTodo(String id, String editTitle, String editDescription) {
-  //   final todoIndex = todoList.indexWhere((todo) => todo.id == id);
-  //   if (todoIndex == -1) return;
-  //   setState(() {
-  //     todoList[todoIndex] = todoList[todoIndex].copyWith(
-  //       id: todoList[todoIndex].id,
-  //       title: editTitle,
-  //       description: editDescription,
-  //     );
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -105,9 +55,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
       body: Column(
         children: [
-          homeState.isEmpty
-              ? EmptyTodo(appName: appName)
-              : Expanded(child: TodoView()),
+          homeState.isEmpty ? EmptyTodo(appName: appName) : TodoView(),
         ],
       ),
     );

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasks/ui/pages/home/home_view_model.dart';
@@ -13,46 +12,27 @@ class TodoView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final todos = ref.watch(homeViewModel);
-    return ListView.builder(
-      padding: EdgeInsets.fromLTRB(12, 12, 12, 150),
-      itemCount: todos.length,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return TodoDetailPage();
-                },
-              ),
-            );
-          },
-          onLongPress: () {
-            showCupertinoDialog(
-              context: context,
-              builder: (context) => CupertinoAlertDialog(
-                title: Text("삭제 확인"),
-                content: Text("정말 삭제하시겠습니까?"),
-                actions: [
-                  CupertinoDialogAction(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("취소"),
-                  ),
-                  CupertinoDialogAction(
-                    isDestructiveAction: true,
-                    onPressed: () {},
-                    child: Text("삭제"),
-                  ),
-                ],
-              ),
-            );
-          },
-          child: ToDoWidget(todoId: todos[index].id),
-        );
-      },
+    return Expanded(
+      child: ListView.builder(
+        padding: EdgeInsets.fromLTRB(12, 12, 12, 150),
+        itemCount: todos.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return TodoDetailPage(todoId: todos[index].id);
+                  },
+                ),
+              );
+            },
+
+            child: ToDoWidget(todoId: todos[index].id),
+          );
+        },
+      ),
     );
   }
 }

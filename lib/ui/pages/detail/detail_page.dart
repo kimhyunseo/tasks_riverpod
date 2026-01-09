@@ -1,71 +1,35 @@
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasks/data/model/todo_entity.dart';
+import 'package:tasks/ui/pages/home/home_view_model.dart';
+import 'package:tasks/utils/dialog_utils.dart';
+import 'package:tasks/utils/snackbar_utils.dart';
 
 // 6. To DO 상세 보기 화면 만들기
-class TodoDetailPage extends StatefulWidget {
-  const TodoDetailPage({super.key});
+class TodoDetailPage extends ConsumerStatefulWidget {
+  const TodoDetailPage({super.key, required this.todoId});
+
+  final String todoId;
 
   @override
-  State<TodoDetailPage> createState() => _TodoDetailPageState();
+  ConsumerState<TodoDetailPage> createState() => _TodoDetailPageState();
 }
 
-class _TodoDetailPageState extends State<TodoDetailPage> {
+class _TodoDetailPageState extends ConsumerState<TodoDetailPage> {
   late TextEditingController titleController;
   late TextEditingController descriptionController;
 
   @override
   void initState() {
     super.initState();
-    titleController = TextEditingController(text: "제목 들어갈 부분");
-    descriptionController = TextEditingController(text: "설명 들어갈 부분");
-  }
 
-  // 수정한 할 일 저장 함수
-  void editAndSaveTodo() {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Text("저장 확인"),
-        content: Text("변경된 내용을 저장하시겠습니까?"),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text("취소"),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () {},
-            child: Text("저장"),
-          ),
-        ],
-      ),
-    );
-  }
+    final todos = ref.read(homeViewModel);
+    final todo = todos.firstWhere((t) => t.id == widget.todoId);
 
-  // 할 일 삭제 함수
-  void deleteTodo(BuildContext context) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Text("삭제 확인"),
-        content: Text("정말 삭제하시겠습니까?"),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text("취소"),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () {},
-            child: Text("삭제"),
-          ),
-        ],
-      ),
-    );
+    titleController = TextEditingController(text: todo.title);
+    descriptionController = TextEditingController(text: todo.description);
   }
 
   @override
@@ -75,8 +39,68 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
     super.dispose();
   }
 
+  // 수정한 할 일 저장 함수
+  void editAndSaveTodo() {
+    showConfirmationDialog(
+      context: context,
+      title: "저장 확인",
+      content: "변경된 내용을 저장하시겠습니까?",
+      confirmText: "저장",
+      isDestructive: true,
+      onConfirm: () async {
+        final vm = ref.read(homeViewModel.notifier);
+        final todos = ref.watch(homeViewModel);
+        final todo = todos.firstWhere((todo) => todo.id == widget.todoId);
+
+        final updatedTodo = ToDoEntity(
+          id: widget.todoId,
+          title: titleController.text,
+          description: descriptionController.text,
+          isFavorite: todo.isFavorite,
+          isDone: todo.isDone,
+        );
+
+        await vm.addTodo(todo: updatedTodo);
+        SnackbarUtils.showSnackBr(context, "할 일이 저장되었습니다!");
+      },
+    );
+  }
+
+  // 할 일 삭제 함수
+  void deleteTodo(BuildContext context) {
+    showConfirmationDialog(
+      context: context,
+      title: "삭제 확인",
+      content: "정말 삭제하시겠습니까?",
+      confirmText: "삭제",
+      isDestructive: true,
+      onConfirm: () {
+        final vm = ref.read(homeViewModel.notifier);
+        final todos = ref.watch(homeViewModel);
+        final deletedTodo = todos.firstWhere((t) => t.id == widget.todoId);
+
+        vm.deleteTodo(id: widget.todoId);
+
+        if (mounted) {
+          Navigator.pop(context);
+        }
+        SnackbarUtils.showActionSnackBar(
+          context: context,
+          text: "할 일이 삭제되었습니다!",
+          actionLabel: "UNDO",
+          onAction: () {
+            final restoredTodo = deletedTodo.copyWith(id: '');
+            vm.addTodo(todo: restoredTodo);
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final todos = ref.watch(homeViewModel);
+    final todo = todos.firstWhere((todo) => todo.id == widget.todoId);
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
@@ -86,13 +110,17 @@ class _TodoDetailPageState extends State<TodoDetailPage> {
           child: Icon(Icons.arrow_back_rounded),
         ),
         actions: [
-          // 6-1.  favorite 변경 구현
           IconButton(
-            onPressed: () {},
-            // icon: widget.todoList[widget.index].isFavorite
-            //     ? Icon(Icons.star_rounded, size: 28)
-            //     : Icon(Icons.star_border_rounded, size: 28),
-            icon: Icon(Icons.star_border_rounded, size: 28),
+            onPressed: () {
+              final vm = ref.read(homeViewModel.notifier);
+              vm.toggleFavorite(
+                id: widget.todoId,
+                isFavorite: !todo.isFavorite,
+              );
+            },
+            icon: todo.isFavorite
+                ? Icon(Icons.star_rounded, size: 28)
+                : Icon(Icons.star_border_rounded, size: 28),
           ),
           IconButton(
             onPressed: () {

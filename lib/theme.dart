@@ -27,13 +27,13 @@ final lightTheme = ThemeData(
 final darkTheme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
-    seedColor: Colors.indigo,
+    seedColor: Colors.indigo.shade400,
     brightness: Brightness.dark,
     onSurface: Colors.blueGrey.shade200,
     surfaceContainer: Colors.white12,
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    backgroundColor: Colors.indigo,
+    backgroundColor: Colors.indigo.shade400,
     foregroundColor: Colors.white,
     iconSize: 24,
     shape: const CircleBorder(),

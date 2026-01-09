@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasks/ui/pages/home/home_view_model.dart';
+import 'package:tasks/utils/dialog_utils.dart';
+import 'package:tasks/utils/snackbar_utils.dart';
 
 class ToDoWidget extends ConsumerWidget {
   const ToDoWidget({super.key, required this.todoId});
@@ -23,7 +25,10 @@ class ToDoWidget extends ConsumerWidget {
       child: Row(
         children: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              final vm = ref.read(homeViewModel.notifier);
+              vm.toggleDone(id: todoId, isDone: !todo.isDone);
+            },
             icon: Icon(
               todo.isDone ? Icons.check_circle_rounded : Icons.circle_outlined,
 
@@ -44,11 +49,15 @@ class ToDoWidget extends ConsumerWidget {
               ),
             ),
           ),
+          // 즐겨찾기
           Material(
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(50),
-              onTap: () {},
+              onTap: () {
+                final vm = ref.read(homeViewModel.notifier);
+                vm.toggleFavorite(id: todoId, isFavorite: !todo.isFavorite);
+              },
               child: SizedBox(
                 width: 40,
                 height: 40,
@@ -58,11 +67,36 @@ class ToDoWidget extends ConsumerWidget {
               ),
             ),
           ),
+
+          // 휴지통
           Material(
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(50),
-              onTap: () {},
+              onTap: () {
+                showConfirmationDialog(
+                  context: context,
+                  title: "삭제 확인",
+                  content: "정말 삭제하시겠습니까?",
+                  confirmText: "삭제",
+                  isDestructive: true,
+                  onConfirm: () {
+                    final vm = ref.read(homeViewModel.notifier);
+                    final deletedTodo = todos.firstWhere((t) => t.id == todoId);
+                    vm.deleteTodo(id: todoId);
+
+                    SnackbarUtils.showActionSnackBar(
+                      context: context,
+                      text: "할 일이 삭제되었습니다!",
+                      actionLabel: "UNDO",
+                      onAction: () {
+                        final restoredTodo = deletedTodo.copyWith(id: '');
+                        vm.addTodo(todo: restoredTodo);
+                      },
+                    );
+                  },
+                );
+              },
               child: SizedBox(width: 40, height: 40, child: Icon(Icons.delete)),
             ),
           ),
