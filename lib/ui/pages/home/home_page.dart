@@ -92,7 +92,6 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         ],
       ),
-      // 3-3 theme에서 버튼 모양과 색 적용 및 addTodo 함수 연결
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
@@ -106,7 +105,6 @@ class _HomePageState extends ConsumerState<HomePage> {
 
       body: Column(
         children: [
-          // 5-1 To DO가 없을 떄는 처음 만들었는 3번에서 만든 위젯 있을 때는 TodoView가 보이게 구현
           homeState.isEmpty
               ? EmptyTodo(appName: appName)
               : Expanded(child: TodoView()),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tasks/ui/pages/write_todo/write_todo_view_model.dart';
+import 'package:tasks/data/model/todo_entity.dart';
+import 'package:tasks/ui/pages/home/home_view_model.dart';
 
 // 4. Todo를 추가하는 화면 만들기
 class PlusTodo extends ConsumerStatefulWidget {
@@ -30,7 +31,6 @@ class _PlusTodoState extends ConsumerState<PlusTodo> {
     });
   }
 
-  // 할 일 추가할 때 사용자 값이 비어있으면 동작하지 않게 구현
   void saveToDo() async {
     final value = titleController.text;
     final descriptionValue = descriptionController.text;
@@ -40,10 +40,19 @@ class _PlusTodoState extends ConsumerState<PlusTodo> {
       return;
     }
 
-    final viewModel = ref.read(writeTodoViewModel(null).notifier);
-    await viewModel.addToDo(id: DateTime.now().toIso8601String(), title: value);
+    final viewModel = ref.read(homeViewModel.notifier);
+    await viewModel.addTodo(
+      todo: ToDoEntity(
+        id: '',
+        title: value,
+        description: descriptionValue,
+        isFavorite: isFavorite,
+      ),
+    );
 
-    Navigator.pop(context);
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -68,9 +77,7 @@ class _PlusTodoState extends ConsumerState<PlusTodo> {
           TextField(
             controller: titleController,
             focusNode: titleFocusNode,
-            // 4-1. 자동으로 키보드가 뜨도록 구현 (autofocus)
             autofocus: true,
-            // 4-1. title용 textfiled에서 줄바꿈 대신 저장이 되도록 구현, 비어있을 때는 구현 x
             textInputAction: TextInputAction.done,
             onSubmitted: (_) {
               saveToDo();
@@ -90,7 +97,6 @@ class _PlusTodoState extends ConsumerState<PlusTodo> {
             TextField(
               controller: descriptionController,
               focusNode: descriptionFocusNode,
-              // 4-3 줄바꿈이 일어나게 구현
               textInputAction: TextInputAction.newline,
               minLines: 1,
               maxLines: 10,
@@ -105,8 +111,6 @@ class _PlusTodoState extends ConsumerState<PlusTodo> {
 
           Row(
             children: [
-              // 4-2. bool 값을 이용하여 아이콘 상태 표시
-              // ㄴ 설명 icon 눌렀을 때 description textfield 보이게 하고 표시시 icon 숨기기
               if (isDescription == false)
                 IconButton(
                   onPressed: () {

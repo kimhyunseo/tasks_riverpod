@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasks/ui/pages/home/home_view_model.dart';
 
-class ToDoWidget extends StatelessWidget {
-  const ToDoWidget({super.key});
+class ToDoWidget extends ConsumerWidget {
+  const ToDoWidget({super.key, required this.todoId});
+
+  final String todoId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final todos = ref.watch(homeViewModel);
+    final todo = todos.firstWhere((todo) => todo.id == todoId);
     return Container(
       width: double.infinity,
       constraints: BoxConstraints(minHeight: 50),
@@ -19,8 +25,8 @@ class ToDoWidget extends StatelessWidget {
           IconButton(
             onPressed: () {},
             icon: Icon(
-              // todo.isDone ? Icons.check_circle_rounded : Icons.circle_outlined,
-              Icons.circle_outlined,
+              todo.isDone ? Icons.check_circle_rounded : Icons.circle_outlined,
+
               size: 24,
             ),
           ),
@@ -28,22 +34,37 @@ class ToDoWidget extends StatelessWidget {
 
           Expanded(
             child: Text(
-              '제목 들어갈 부분',
+              todo.title,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                // decoration: todo.isDone
-                //     ? TextDecoration.lineThrough
-                //     : TextDecoration.none,
+                decoration: todo.isDone
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          // 5-1. 버튼이 눌렸을 때 favorite 상태 변경
-          IconButton(
-            onPressed: () {},
-            // icon: todo.isFavorite
-            //     ? Icon(Icons.star_rounded, size: 28)
-            //     : Icon(Icons.star_border_rounded, size: 28),
-            icon: Icon(Icons.star_rounded, size: 28),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(50),
+              onTap: () {},
+              child: SizedBox(
+                width: 40,
+                height: 40,
+                child: todo.isFavorite
+                    ? Icon(Icons.star_rounded)
+                    : Icon(Icons.star_border_rounded),
+              ),
+            ),
+          ),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(50),
+              onTap: () {},
+              child: SizedBox(width: 40, height: 40, child: Icon(Icons.delete)),
+            ),
           ),
         ],
       ),

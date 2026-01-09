@@ -6,8 +6,10 @@ final lightTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: Colors.blueAccent,
     brightness: Brightness.light,
+    onSurface: Colors.blueGrey.shade600,
     surfaceContainer: Colors.white54,
   ),
+
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     backgroundColor: Colors.blueAccent,
     foregroundColor: Colors.white,
@@ -15,8 +17,11 @@ final lightTheme = ThemeData(
     shape: const CircleBorder(),
   ),
   iconButtonTheme: IconButtonThemeData(
-    style: ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.black54)),
+    style: ButtonStyle(
+      foregroundColor: WidgetStatePropertyAll(Colors.blueGrey),
+    ),
   ),
+  iconTheme: IconThemeData(color: Colors.blueGrey),
 );
 
 final darkTheme = ThemeData(
@@ -24,6 +29,7 @@ final darkTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: Colors.indigo,
     brightness: Brightness.dark,
+    onSurface: Colors.blueGrey.shade200,
     surfaceContainer: Colors.white12,
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -33,6 +39,9 @@ final darkTheme = ThemeData(
     shape: const CircleBorder(),
   ),
   iconButtonTheme: IconButtonThemeData(
-    style: ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.white60)),
+    style: ButtonStyle(
+      foregroundColor: WidgetStatePropertyAll(Colors.blueGrey.shade600),
+    ),
   ),
+  iconTheme: IconThemeData(color: Colors.blueGrey.shade600),
 );

@@ -22,27 +22,27 @@ class Todorepository {
     }
   }
 
-  // 할 일 1개 보기
-  Future<ToDoEntity?> getOneToDo(String id) async {
-    //
-    return null;
-  }
-
   //  할 일 추가
-  Future<void> addToDo(ToDoEntity todo) async {
+  Future<void> addToDo({required ToDoEntity todo}) async {
     final firestore = FirebaseFirestore.instance;
     final collectionRef = firestore.collection('todos');
-    final docRef = collectionRef.doc();
+    final docRef = collectionRef.doc(todo.id);
     await docRef.set(todo.toJson());
   }
 
   //  할 일 수정
-  Future<void> updateToDo(ToDoEntity todo) async {
-    //
+  Future<void> updateToDo({required ToDoEntity todo}) async {
+    final firestore = FirebaseFirestore.instance;
+    final collectionRef = firestore.collection('todos');
+    final docRef = collectionRef.doc(todo.id);
+    await docRef.update(todo.toJson());
   }
 
   //  할 일 삭제
   Future<void> daleteToDo(String id) async {
-    //
+    final firestore = FirebaseFirestore.instance;
+    final collectionRef = firestore.collection('todos');
+    final docRef = collectionRef.doc(id);
+    await docRef.delete();
   }
 }
