@@ -61,7 +61,7 @@ class _TodoDetailPageState extends ConsumerState<TodoDetailPage> {
         );
 
         await vm.addTodo(todo: updatedTodo);
-        SnackbarUtils.showSnackBr(context, "할 일이 저장되었습니다!");
+        SnackbarUtils.showSnackBr(context, "할 일이 수정되었습니다");
       },
     );
   }
@@ -86,7 +86,7 @@ class _TodoDetailPageState extends ConsumerState<TodoDetailPage> {
         }
         SnackbarUtils.showActionSnackBar(
           context: context,
-          text: "할 일이 삭제되었습니다!",
+          text: "할 일이 삭제되었습니다",
           actionLabel: "UNDO",
           onAction: () {
             final restoredTodo = deletedTodo.copyWith(id: '');

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:tasks/data/core/geolocator_helper.dart';
 import 'package:tasks/ui/pages/home/home_view_model.dart';
+import 'package:tasks/ui/pages/home/weather_info_view_model.dart';
 import 'package:tasks/ui/pages/home/widgets/empty_todo.dart';
+import 'package:tasks/ui/pages/home/widgets/home_bottom_bar.dart';
 import 'package:tasks/ui/pages/write_todo/write_todo.dart';
 import 'package:tasks/ui/pages/todo_list/todo_list_page.dart';
 
@@ -18,13 +22,41 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _HomePageState extends ConsumerState<HomePage>
+    with SingleTickerProviderStateMixin {
   final String appName = 'Hyunseo\'s Tasks';
+
+  late final DateFormat _dateFormat;
+  DateTime? _lastUpdated;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _dateFormat = DateFormat('yy년 M월 d일 HH시 mm분', 'ko_KR');
+
+    _loadLocation();
+  }
+
+  Future<void> _loadLocation() async {
+    final position = await GeolocatorHelper.getPosition();
+
+    if (position != null) {
+      final viewModel = ref.read(weatherInfoViewModel.notifier);
+
+      viewModel.getWeatherInfo(position.latitude, position.longitude);
+    }
+
+    setState(() {
+      _lastUpdated = DateTime.now();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final homeState = ref.watch(homeViewModel);
     final isLight = widget.themeMode == ThemeMode.light;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -53,24 +85,13 @@ class _HomePageState extends ConsumerState<HomePage> {
         child: Icon(Icons.add),
       ),
 
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.all(14),
-        width: double.infinity,
-        height: 110,
-        color: Colors.blueGrey.shade300,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text("업데이트 시간: 25년 10월 28일 00시 00분"),
-                Icon(Icons.nightlight_round),
-              ],
-            ),
-            Text("날씨:맑음 온도:12.1도 풍속 5.4m/s"),
-          ],
-        ),
+      bottomNavigationBar: HomeBottomBar(
+        dateFormat: _dateFormat,
+        themeMode: widget.themeMode,
+        lastUpdated: _lastUpdated,
+        onReload: () async {
+          await _loadLocation();
+        },
       ),
       body: Column(
         children: [

@@ -8,10 +8,11 @@ final lightTheme = ThemeData(
     brightness: Brightness.light,
     onSurface: Colors.blueGrey.shade600,
     surfaceContainer: Colors.white54,
+    secondaryContainer: const Color.fromARGB(255, 157, 170, 188),
   ),
 
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    backgroundColor: Colors.blueAccent,
+    backgroundColor: Color.fromARGB(255, 108, 159, 225),
     foregroundColor: Colors.white,
     iconSize: 24,
     shape: const CircleBorder(),
@@ -22,6 +23,7 @@ final lightTheme = ThemeData(
     ),
   ),
   iconTheme: IconThemeData(color: Colors.blueGrey),
+  progressIndicatorTheme: ProgressIndicatorThemeData(color: Colors.blueGrey),
 );
 
 final darkTheme = ThemeData(
@@ -31,6 +33,7 @@ final darkTheme = ThemeData(
     brightness: Brightness.dark,
     onSurface: Colors.blueGrey.shade200,
     surfaceContainer: Colors.white12,
+    secondaryContainer: Colors.blueGrey.shade900,
   ),
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     backgroundColor: Colors.indigo.shade400,
@@ -44,4 +47,5 @@ final darkTheme = ThemeData(
     ),
   ),
   iconTheme: IconThemeData(color: Colors.blueGrey.shade600),
+  progressIndicatorTheme: ProgressIndicatorThemeData(color: Colors.blueGrey),
 );

@@ -87,8 +87,8 @@ class ToDoWidget extends ConsumerWidget {
 
                     SnackbarUtils.showActionSnackBar(
                       context: context,
-                      text: "할 일이 삭제되었습니다!",
-                      actionLabel: "UNDO",
+                      text: "할 일이 삭제되었습니다",
+                      actionLabel: "취소",
                       onAction: () {
                         final restoredTodo = deletedTodo.copyWith(id: '');
                         vm.addTodo(todo: restoredTodo);
