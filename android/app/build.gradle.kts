@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.example.tasks"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = compileSdkVersion 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

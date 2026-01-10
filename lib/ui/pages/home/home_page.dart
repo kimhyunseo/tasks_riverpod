@@ -53,6 +53,25 @@ class _HomePageState extends ConsumerState<HomePage> {
         child: Icon(Icons.add),
       ),
 
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.all(14),
+        width: double.infinity,
+        height: 110,
+        color: Colors.blueGrey.shade300,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text("업데이트 시간: 25년 10월 28일 00시 00분"),
+                Icon(Icons.nightlight_round),
+              ],
+            ),
+            Text("날씨:맑음 온도:12.1도 풍속 5.4m/s"),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           homeState.isEmpty ? EmptyTodo(appName: appName) : TodoView(),
