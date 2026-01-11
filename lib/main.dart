@@ -35,7 +35,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Hyunseo's Tasks",
       themeMode: _themeMode,
       theme: lightTheme,
       darkTheme: darkTheme,

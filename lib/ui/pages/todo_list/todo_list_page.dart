@@ -10,27 +10,25 @@ class TodoView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final todos = ref.watch(homeViewModel);
-    return Expanded(
-      child: ListView.builder(
-        padding: EdgeInsets.fromLTRB(12, 12, 12, 150),
-        itemCount: todos.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return TodoDetailPage(todoId: todos[index].id);
-                  },
-                ),
-              );
-            },
+    return ListView.builder(
+      padding: EdgeInsets.fromLTRB(12, 12, 12, 150),
+      itemCount: todos.length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return TodoDetailPage(todoId: todos[index].id);
+                },
+              ),
+            );
+          },
 
-            child: ToDoWidget(todoId: todos[index].id),
-          );
-        },
-      ),
+          child: ToDoWidget(todoId: todos[index].id),
+        );
+      },
     );
   }
 }

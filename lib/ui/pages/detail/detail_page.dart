@@ -87,7 +87,7 @@ class _TodoDetailPageState extends ConsumerState<TodoDetailPage> {
         SnackbarUtils.showActionSnackBar(
           context: context,
           text: "할 일이 삭제되었습니다",
-          actionLabel: "UNDO",
+          actionLabel: "취소",
           onAction: () {
             final restoredTodo = deletedTodo.copyWith(id: '');
             vm.addTodo(todo: restoredTodo);

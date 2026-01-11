@@ -31,45 +31,27 @@ class HomeBottomBar extends ConsumerWidget {
       height: 100,
       color: Theme.of(context).colorScheme.secondaryContainer,
       child: weather != null
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                IconButton(
-                  style: IconButton.styleFrom(
-                    backgroundColor: isLight ? Colors.white38 : Colors.white12,
-                    foregroundColor: isLight
-                        ? Colors.blueGrey
-                        : Colors.blueGrey.shade400,
-                  ),
-                  onPressed: onReload,
-                  icon: const Icon(Icons.replay),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text("업데이트 시간: $formatted"),
-                        SizedBox(width: 8),
-                        Icon(
-                          weather.isDay == 0
-                              ? Icons.nightlight_round
-                              : Icons.sunny,
-                        ),
-                      ],
+                    Text("업데이트 시간: $formatted"),
+                    SizedBox(width: 8),
+                    Icon(
+                      weather.isDay == 0 ? Icons.nightlight_round : Icons.sunny,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text("날씨: ${weather.weatherDescription}"),
-                        SizedBox(width: 12),
-                        Text("온도: ${weather.temperature}°C"),
-                        SizedBox(width: 12),
-                        Text("풍속: ${weather.windSpeed}m/s"),
-                      ],
-                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text("날씨: ${weather.weatherDescription}"),
+                    SizedBox(width: 12),
+                    Text("온도: ${weather.temperature}°C"),
+                    SizedBox(width: 12),
+                    Text("풍속: ${weather.windSpeed}m/s"),
                   ],
                 ),
               ],

@@ -93,10 +93,16 @@ class _HomePageState extends ConsumerState<HomePage>
           await _loadLocation();
         },
       ),
-      body: Column(
-        children: [
-          homeState.isEmpty ? EmptyTodo(appName: appName) : TodoView(),
-        ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _loadLocation();
+        },
+        child: homeState.isEmpty
+            ? ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [EmptyTodo(appName: appName)],
+              )
+            : TodoView(),
       ),
     );
   }
