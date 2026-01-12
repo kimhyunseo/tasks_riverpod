@@ -24,18 +24,27 @@ class ToDoWidget extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          IconButton(
-            onPressed: () {
-              final vm = ref.read(homeViewModel.notifier);
-              vm.toggleDone(id: todoId, isDone: !todo.isDone);
-            },
-            icon: Icon(
-              todo.isDone ? Icons.check_circle_rounded : Icons.circle_outlined,
-
-              size: 24,
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(50),
+              onTap: () {
+                final vm = ref.read(homeViewModel.notifier);
+                vm.toggleDone(id: todoId, isDone: !todo.isDone);
+              },
+              child: SizedBox(
+                width: 40,
+                height: 40,
+                child: Icon(
+                  todo.isDone
+                      ? Icons.check_circle_rounded
+                      : Icons.circle_outlined,
+                ),
+              ),
             ),
           ),
-          SizedBox(width: 12),
+
+          SizedBox(width: 4),
 
           Expanded(
             child: Text(
@@ -80,18 +89,20 @@ class ToDoWidget extends ConsumerWidget {
                   content: "정말 삭제하시겠습니까?",
                   confirmText: "삭제",
                   isDestructive: true,
-                  onConfirm: () {
+                  onConfirm: () async {
                     final vm = ref.read(homeViewModel.notifier);
                     final deletedTodo = todos.firstWhere((t) => t.id == todoId);
-                    vm.deleteTodo(id: todoId);
+
+                    await vm.deleteTodo(id: todoId);
 
                     SnackbarUtils.showActionSnackBar(
                       context: context,
                       text: "할 일이 삭제되었습니다",
                       actionLabel: "취소",
-                      onAction: () {
+                      onAction: () async {
                         final restoredTodo = deletedTodo.copyWith(id: '');
                         vm.saveTodo(todo: restoredTodo);
+                        await vm.fetch();
                       },
                     );
                   },

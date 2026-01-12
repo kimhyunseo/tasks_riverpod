@@ -8,48 +8,54 @@ import 'package:tasks/data/repository/todo_repository.dart';
 class HomeViewModel extends Notifier<List<ToDoEntity>> {
   @override
   List<ToDoEntity> build() {
-    getAllToDo();
+    fetch();
     return [];
   }
 
   final todoRepo = TodoRepository();
 
-  // 모든 할 일 가져오기
-  void getAllToDo() async {
+  /// 모든 할 일 가져오기
+  Future<void> fetch() async {
     final todos = await todoRepo.getToDos();
     state = todos ?? [];
   }
 
-  // 할 일 저장
+  /// 할 일 저장
   Future<ToDoEntity?> saveTodo({required ToDoEntity todo}) async {
     try {
-      if (todo.id.isEmpty) {
-        final docId = FirebaseFirestore.instance.collection('todos').doc().id;
-        final newTodo = todo.copyWith(id: docId);
-        await todoRepo.addToDo(todo: newTodo);
-        state = [...state, newTodo];
-        return newTodo;
-      } else {
-        // 기존 할 일 수정
-        await todoRepo.updateToDo(todo: todo);
-
-        state = state.map((t) {
-          if (t.id == todo.id) {
-            return todo;
-          } else {
-            return t;
-          }
-        }).toList();
-        return todo;
-      }
+      final docId = FirebaseFirestore.instance.collection('todos').doc().id;
+      final newTodo = todo.copyWith(id: docId);
+      await todoRepo.addToDo(todo: newTodo);
+      state = [...state, newTodo];
+      return newTodo;
     } catch (e) {
       print('할 일 저장 실패: $e');
       rethrow;
     }
   }
 
-  // 즐겨찾기 토글
-  void toggleFavorite({required String id, required bool isFavorite}) async {
+  Future<ToDoEntity?> editTodo({required ToDoEntity todo}) async {
+    try {
+      await todoRepo.updateToDo(todo: todo);
+      state = state.map((t) {
+        if (t.id == todo.id) {
+          return todo;
+        } else {
+          return t;
+        }
+      }).toList();
+      return todo;
+    } catch (e) {
+      print('할 일 수정 실패: $e');
+      rethrow;
+    }
+  }
+
+  /// 즐겨찾기 토글
+  Future<void> toggleFavorite({
+    required String id,
+    required bool isFavorite,
+  }) async {
     try {
       final todo = state.firstWhere((t) => t.id == id);
       final updatedTodo = todo.copyWith(isFavorite: isFavorite);
@@ -61,8 +67,8 @@ class HomeViewModel extends Notifier<List<ToDoEntity>> {
     }
   }
 
-  // 완료 토글
-  void toggleDone({required String id, required bool isDone}) async {
+  /// 완료 토글
+  Future<void> toggleDone({required String id, required bool isDone}) async {
     try {
       final todo = state.firstWhere((t) => t.id == id);
       final updatedTodo = todo.copyWith(isDone: isDone);
@@ -76,7 +82,7 @@ class HomeViewModel extends Notifier<List<ToDoEntity>> {
     }
   }
 
-  //  할 일 삭제
+  ///  할 일 삭제
   Future<void> deleteTodo({required String id}) async {
     try {
       await todoRepo.deleteToDo(id);

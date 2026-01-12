@@ -88,6 +88,9 @@ class _HomePageState extends ConsumerState<HomePage>
         onRefresh: () async {
           await _loadLocation();
 
+          ref.read(homeViewModel.notifier).fetch();
+          // ref.invalidate(homeViewModel);
+
           setState(() {
             _justUpdated = true;
           });

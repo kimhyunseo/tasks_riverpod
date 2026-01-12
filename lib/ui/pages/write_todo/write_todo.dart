@@ -56,9 +56,10 @@ class _PlusTodoState extends ConsumerState<WriteTodo> {
         title: value,
         description: descriptionValue,
         isFavorite: isFavorite,
+        createdAt: DateTime.now(),
       ),
     );
-
+    await viewModel.fetch();
     if (mounted) {
       Navigator.pop(context);
     }

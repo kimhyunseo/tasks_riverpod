@@ -1,154 +1,163 @@
-# 📝 Tasks (To-Do App)
+# 📝 Tasks (To-Do App) v2.0
 
-Flutter 할 일 관리 애플리케이션입니다.
-할 일 추가, 완료 체크, 즐겨찾기 설정 및 상세 보기 기능을 제공합니다.
+Firebase와 Open-Meteo API를 연동한 MVVM 패턴 기반의 Flutter 할 일 관리 애플리케이션입니다.
+할 일 데이터는 Firestore에 저장되며 사용자의 현재 위치에 따른 날씨 정보를 제공합니다.
 
 ---
 
-## 📱 프로젝트 정보
+## 🛠 Tech Stack & Libraries
 
-프로젝트명: tasks
-개발 환경: Flutter, Dart
-주요 기능: 할 일 관리(CRUD), 상태 관리, 테마 변경(Light/Dark)
+이번 프로젝트는 MVVM 아키텍처를 기반으로 설계되었으며, 실무 표준에 가까운 생산성을 확보하기 위해 아래 패키지들을 전략적으로 도입했습니다.
+
+### 1. 상태 관리 및 로직 분리
+
+**flutter_riverpod**: Notifier와 Provider를 활용하여 상태 변경 흐름을 명확히 관리하고,
+UI와 비즈니스 로직을 분리했습니다.
+
+### 2. 데이터 모델링 (Immutable Data)
+
+**freezed & json_serializable**: 불변성(Immutable) 데이터 모델을 자동으로 생성하여 데이터 안정성을 높이고, JSON 직렬화 로직을 자동화했습니다.
+
+### 3. 인프라 및 데이터 통신
+
+**firebase_core & cloud_firestore**: Firebase를 연동하여 실시간 데이터베이스 환경을 구축했습니다.
+
+**dio & http**: 외부 날씨 API(Open-Meteo)와의 통신을 위해 사용했습니다.
+
+**geolocator**: 사용자의 실시간 GPS 좌표를 취득하여 위치 기반 서비스를 구현했습니다.
+
+### 4. 유틸리티
+
+**intl**: 날짜 및 시간 데이터를 한국 표준 형식으로 변환하기 위해 사용했습니다.
 
 ---
 
 ## 📸 실행 화면 (Screenshots)
 
-- Empty View
-<img width="300" alt="Empty View" src="https://github.com/user-attachments/assets/8d8b0035-9103-444d-8e24-576d55f5c4fb" />
+Main & Weather View
 
-- Add Task
-<img width="300" alt="plustodo" src="https://github.com/user-attachments/assets/b3e1004e-0485-456c-87ad-3faacf188741" />
-<img width="300"alt="plustodo2" src="https://github.com/user-attachments/assets/5dd50899-caca-428a-8a27-74014f639a6b" />
+Add Task (BottomSheet)
 
-- To-Do List
-<img width="300" alt="todolistview" src="https://github.com/user-attachments/assets/a9812389-8c3d-4f7f-bb87-baf1a3146c5d" />
+Detail View & Edit
 
-- Detail View
-<img width="300" alt="detail view" src="https://github.com/user-attachments/assets/3280ad03-d506-4cab-b488-dc5ef7f4f9bf" />
-
-- Dark Mode
-<img width="300" alt="Empty View:dark" src="https://github.com/user-attachments/assets/b6668519-ae7c-4ee9-ae30-4eb5f1ba8430" />
-<img width="300" alt="todolistview:dark" src="https://github.com/user-attachments/assets/c5454ebb-caa0-4e02-a9c1-094834b24708" />
-<img width="300" alt="detail view:dark" src="https://github.com/user-attachments/assets/35711add-392f-4959-88eb-46d6eb622b39" />
-
-
----
+## Dark Mode
 
 ## 📂 폴더 구조 (Folder Structure)
 
 데이터 모델(models)과 UI(pages)를 분리하여, 여러 화면에서 데이터를 쉽게 공유할 수 있도록 구조화했습니다.
 
 ```
-Plaintext
 lib/
-├── main.dart                        # 앱 진입점
-├── theme.dart                       # 테마 설정 (Light/Dark Data)
-├── models/
-│   └── todo_entity.dart             # todo 데이터 모델
-└── pages/
-    ├── home/
-    │   ├── home_page.dart           # 메인 화면
-    │   └── widgets/
-    │       ├── empty_todo.dart      # 할 일이 없을 때 표시되는 안내 위젯
-    │       ├── plus_todo.dart       # 할 일 추가 BottomSheet 위젯
-    │       ├── todo_view.dart       # 할 일 리스트 전체 뷰
-    │       └── todo_widget.dart     # 개별 할 일 아이템
-    └── todo_detail/
-        └── todo_detail_page.dart    # 할 일 상세 보기 화면
+├── data/
+│   ├── core/
+│   │   └── geolocator_helper.dart      # GPS 위치 권한 및 좌표 취득 헬퍼
+│   ├── model/
+│   │   ├── todo_entity.dart           # To-Do 데이터 모델 (Freezed)
+│   │   ├── todo_entity_firestore.dart # Firestore 저장 전용 Extension 로직
+│   │   └── weather_model.dart         # 기상 정보 데이터 모델 (Freezed)
+│   └── repository/
+│       ├── todo_repository.dart       # Firestore CRUD 로직 처리
+│       └── weather_info_repository.dart # Open-Meteo API 통신 처리
+├── ui/
+│   └── pages/
+│       ├── detail/
+│       │   └── detail_page.dart       # 할 일 상세 보기 및 수정 페이지
+│       ├── home/
+│       │   ├── widgets/               # 홈 화면 전용 위젯 (하단 바, empty 등)
+│       │   ├── home_page.dart         # 메인 홈 화면
+│       │   ├── home_view_model.dart   # 할 일 상태 관리 (Riverpod Notifier)
+│       │   └── weather_info_view_model.dart # 날씨 상태 관리 (Riverpod Notifier)
+│       ├── todo_list/
+│       │   ├── widgets/               # 리스트 아이템 개별 위젯
+│       │   └── todo_list_page.dart    # 할 일 목록 표시 페이지
+│       └── write_todo/
+│           └── write_todo.dart        # 할 일 추가 바텀 시트
+└── utils/
+    ├── dialog_utils.dart              # 공통 다이얼로그(확인/취소) 유틸
+    └── snackbar_utils.dart            # 공통 스낵바 알림 유틸
 ```
 
----
+### 구조 설계 특징
 
-## ✨ 주요 기능
+**Data Layer**: model과 repository를 통해 데이터의 출처(Firebase/API)와 형식을 관리합니다.
 
-### 1️⃣ 기본 기능 (Essential)
+**UI Layer**: 각 페이지(pages)별로 관련 view_model과 widgets를 모아두어 코드 응집도를 높였습니다.
 
-#### 1. 프로젝트 구조 및 데이터 모델
+**MVVM**: view_model이 상태 관리를 담당하고, view는 UI 렌더링에만 집중하도록 설계했습니다.
 
-화면 구성: 초기 화면(HomePage)과 상세 화면(ToDoDetailPage)으로 네비게이션 구조 설계
-
-#### 2. 데이터 모델
-
-ToDoEntity 클래스를 생성하여 title, description, isFavorite, isDone 필드로 할 일 객체를 관리
-
-#### 3. 기본 화면 (To Do 리스트가 없는 화면) 만들기
-
-AppBar: 사용자 이름을 포함한 타이틀('Hyunseo’s Tasks') 적용 및 디자인 커스터마이징
-
-빈 화면 안내: 할 일이 없을 경우, 이미지와 텍스트를 Column으로 배치하여 안내 메시지 표시
-
-추가 버튼: FloatingActionButton을 배치하여 할 일 추가 기능(addTodo)과 연결
-
-#### 4. 할 일 추가 (Add ToDo BottomSheet)
-
-입력 UI: showModalBottomSheet를 활용하여 제목(title) 입력 필드 구현 및 자동 포커스 처리
-
-키보드 대응: MediaQuery.viewInsets 및 Scaffold 설정을 통해 키보드가 올라와도 UI가 가려지지 않도록 구현
-
-설명(Description) 아이콘 클릭 시 추가 입력 필드 토글
-
-즐겨찾기(Favorite) 아이콘으로 작성 전 상태 미리 설정 가능
-
-저장 로직: 제목이 비어있을 경우 '저장' 버튼을 비활성화하여 빈 데이터 생성을 방지
-
-#### 5. 할 일 목록 표시 (List View)
-
-위젯 분리: ToDoView 위젯을 생성하여 리스트 뷰 관리
-
-완료 처리: 버튼 클릭 시 isDone 상태를 변경하고, 텍스트에 취소선적용
-
-상태 동기화: VoidCallback을 통해 자식 위젯의 이벤트를 부모 위젯에서 처리하여 데이터 일관성 유지
-
-#### 6. 상세 보기 (Detail Page)
-
-화면 이동: 리스트 아이템 클릭 시 ToDoEntity를 전달하며 상세 화면으로 전환
-
-기능 연동:
-AppBar의 leading 버튼으로 뒤로 가기 구현.
-actions 영역에 즐겨찾기 버튼을 배치하여, 상세 화면에서도 상태 변경이 가능하도록 구현(메인 화면과 동기화)
-
-### 2️⃣ 도전 기능 및 추가 구현 (Challenge & Additional Features)
-
-#### 1. 다크 모드 & 간편 테마 전환 (Dark Mode & Easy Toggle)
-
-기능: ThemeData를 활용하여 시스템 설정에 구애받지 않고 다크 모드와 라이트 모드를 지원
-
-\+ UX 개선: HomePage의 AppBar에 테마 변경 버튼을 배치하여 즉시 테마를 전환할 수 있도록 접근성을 높임
-
-#### 2. 위젯 컴포넌트화 (Componentization)
-
-구조 개선: 반복되거나 독립적인 UI 요소를 별도의 위젯으로 분리
-
-#### 3. 입력 검증 UX
-
-UX 개선: 빈 값 입력 방지를 위해 SnackBar 대신 저장 버튼 비활성화(Disabled Button) 방식을 채택하여 사용자가 입력 단계에서부터 직관적으로 상태를 인지할 수 있도록 개선
-
-#### 4. 할 일 수정 및 삭제 (Edit & Delete)
-
-기능 확장: 단순히 할 일을 추가하고 완료하는 것을 넘어 잘못 입력된 내용을 수정하거나 더 이상 필요 없는 항목을 삭제할 수 있는 CRUD 기능을 구현
+**Utils**: 앱 전역에서 반복적으로 사용되는 UI 피드백 로직을 모듈화했습니다.
 
 ---
+
+## 기능 구현 상세 (Feature List)
+
+### 필수 기능 (Essential Features)
+
+#### 1. MVVM 패턴 및 Riverpod 적용
+
+**구조 설계**: Notifier와 NotifierProvider를 사용하여 비즈니스 로직과 UI를 완전히 분리했습니다.
+
+**데이터 관리**: HomeViewModel을 통해 Firestore의 데이터를 구독하고 상태를 업데이트합니다.
+
+#### 2. Firebase Firestore CRUD
+
+**데이터 저장**: TodoRepository를 통해 모든 할 일을 Firestore에 실시간으로 쓰고 읽습니다.
+
+**모델링**: Freezed를 사용하여 불변(Immutable) 모델을 정의했습니다.
+
+#### 3. 할 일 추가 및 상세 보기
+
+**WriteTodo**: 제목 입력 여부에 따라 저장 버튼을 활성화하여 빈 데이터 생성을 방지합니다.
+
+**DetailPage**: DetailPage: 할 일의 제목과 세부 정보를 수정할 수 있으며 상태 변경 시 메인 화면에 즉시 반영되도록 설계했습니다.
+
+### 도전 기능 및 추가 구현 (Challenge & Custom)
+
+#### 1. 위치 기반 날씨 정보 (GPS & Weather API)
+
+**Geolocator**: 현재 위치의 위도와 경도를 실시간으로 가져옵니다.
+
+**Weather API**: Open-Meteo API를 연동하여 현재 기온과 날씨 정보를 하단 바에 표시합니다.
+
+#### 2. 사용자 경험(UX) 개선 기능
+
+**새로고침 인디케이터**: 메인 리스트를 아래로 당겨 데이터와 날씨를 수동 갱신할 수 있습니다.
+
+**삭제 취소 (Undo)**: 할 일 삭제 시 스낵바에 '취소' 버튼을 제공하여, 실수로 삭제한 데이터를 복구합니다.
 
 ## 🚀 트러블 슈팅 (Trouble shooting)
 
-개발 과정에서 발생한 주요 문제와 해결 과정입니다.
+### 🧨 1. 상세 페이지 삭제 시 에러 화면
 
-### 1. final 필드 수정 오류 (Immutable Pattern)
+**문제**: 상세 페이지에서 할 일 삭제 시, 화면 전환 직전 찰나의 순간에 빨간색 에러 화면 노출.
 
-문제: isDone 상태를 변경하려고 todo.isDone = true로 접근했으나, final 필드라 수정 불가 오류 발생
+**원인**: Navigator.pop 애니메이션 진행 중 상태가 먼저 변경되면서 build 메서드가 삭제된 데이터를 다시 참조해 예외가 발생.
 
-해결: 객체를 직접 수정하는 대신, copyWith 메서드를 구현하여 변경된 값을 가진 새로운 객체로 교체하는 방식으로 해결
+**해결**:
 
-### 2. VoidCallback 타입 불일치 및 실행 시점
+- Navigator.pop을 데이터 삭제 로직보다 먼저 호출하도록 순서 조정.
+- firstOrNull 및 삼항 연산자를 활용하여 데이터 부재 시 로딩 UI를 렌더링하는 방어 로직 구축.
 
-문제: onToggle: toggleDone(index)와 같이 작성하여, 함수가 렌더링 시점에 즉시 실행되고 반환값(void)이 전달되는 오류 발생
+### ⏳ 2. 액션 버튼 포함 시 스낵바 자동 종료 불가
 
-해결: () => toggleDone(index) 형태의 익명 함수로 감싸서, 클릭 시점에만 함수가 실행되도록 수정하고 파라미터도 정상적으로 전달함
+**문제**: 삭제 취소용 SnackBarAction 추가 시, 설정한 duration이 지나도 스낵바가 닫히지 않는 현상 발생.
 
-### 3. 입력 검증 UX (SnackBar vs Button Disable)
+**원인**: action 파라미터 추가 시 상호작용 보장을 위해 내부적으로 persist: true가 기본 설정됨을 확인.
 
-문제: BottomSheet 내부에서 빈 값 경고를 위해 SnackBar를 사용하려 했으나, 키보드 가림 및 레이어 이슈로 시인성이 좋지 않음
+**해결**: 스낵바 생성 시 persist: false 옵션을 명시적으로 부여하여 자동 종료 기능 회복.
 
-해결: TextEditingController의 리스너를 활용하여, 입력값이 비어있을 경우 저장 버튼 자체를 비활성화(onPressed: null)하는 방식으로 변경하여 UX를 개선함
+### 🧩 3. Firestore 데이터 내 중복 ID 필드 저장
+
+**문제**: 모델의 id 필드가 Firestore 문서 내부 필드(data)에도 중복 저장되어 데이터 구조 비효율화.
+
+**원인**: Freezed 모델의 toJson()이 모든 필드를 포함하여 발생하는 현상.
+
+**해결**: Extension을 활용한 toFirestore() 메서드 정의. 저장 직전 id 필드만 제거하도록 구현하여 DB 구조 최적화.
+
+### 🔄 4. 새로고침 인터페이스(UI/UX) 개선
+
+**문제**: 하단 바의 새로고침 버튼이 메인 기능인 할 일 목록보다 시각적으로 두드러져 UX 저해.
+
+**원인**: 버튼 방식은 UI가 복잡해지고 모바일 특유의 직관적인 제스처를 활용하지 못함.
+
+**해결**: 아이콘 버튼 삭제 및 RefreshIndicator 적용. 'Pull to Refresh' 패턴 도입으로 할 일 목록과 날씨 정보를 동시 갱신하는 직관적 UX 구현.

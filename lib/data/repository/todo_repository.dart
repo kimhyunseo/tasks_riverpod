@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tasks/data/model/todo_entity.dart';
+import 'package:tasks/data/model/todo_entity_firestore.dart';
 
 class TodoRepository {
   ///  할 일 목록 보기
@@ -9,7 +10,9 @@ class TodoRepository {
     try {
       final firestore = FirebaseFirestore.instance;
       final collectionRef = firestore.collection('todos');
-      final result = await collectionRef.get();
+      final result = await collectionRef
+          .orderBy('createdAt', descending: true)
+          .get();
 
       final docs = result.docs;
       return docs.map((doc) {
@@ -29,7 +32,7 @@ class TodoRepository {
       final firestore = FirebaseFirestore.instance;
       final collectionRef = firestore.collection('todos');
       final docRef = collectionRef.doc(todo.id);
-      await docRef.set(todo.toJson());
+      await docRef.set(todo.toFirestore());
     } catch (e) {
       print('할 일 추가 중 오류 발생: $e');
       rethrow;
@@ -42,7 +45,7 @@ class TodoRepository {
       final firestore = FirebaseFirestore.instance;
       final collectionRef = firestore.collection('todos');
       final docRef = collectionRef.doc(todo.id);
-      await docRef.update(todo.toJson());
+      await docRef.update(todo.toFirestore());
     } catch (e) {
       print('할 일 수정 중 오류 발생: $e');
       rethrow;

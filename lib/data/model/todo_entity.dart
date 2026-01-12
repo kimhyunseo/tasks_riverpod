@@ -11,6 +11,7 @@ abstract class ToDoEntity with _$ToDoEntity {
     String? description,
     @Default(false) bool isFavorite,
     @Default(false) bool isDone,
+    required DateTime createdAt,
   }) = _ToDoEntity;
 
   factory ToDoEntity.fromJson(Map<String, dynamic> json) =>

@@ -37,7 +37,7 @@ class _TodoDetailPageState extends ConsumerState<TodoDetailPage> {
   }
 
   // 수정한 할 일 저장 함수
-  void editAndSaveTodo() {
+  void editTodo() {
     showConfirmationDialog(
       context: context,
       title: "저장 확인",
@@ -55,9 +55,10 @@ class _TodoDetailPageState extends ConsumerState<TodoDetailPage> {
           description: descriptionController.text,
           isFavorite: todo.isFavorite,
           isDone: todo.isDone,
+          createdAt: DateTime.now(),
         );
 
-        await vm.saveTodo(todo: updatedTodo);
+        await vm.editTodo(todo: updatedTodo);
         SnackbarUtils.showSnackBr(context, "할 일이 수정되었습니다");
       },
     );
@@ -86,8 +87,9 @@ class _TodoDetailPageState extends ConsumerState<TodoDetailPage> {
           context: context,
           text: "할 일이 삭제되었습니다",
           actionLabel: "취소",
-          onAction: () {
+          onAction: () async {
             vm.saveTodo(todo: deletedTodo);
+            await vm.fetch();
           },
         );
       },
@@ -135,7 +137,7 @@ class _TodoDetailPageState extends ConsumerState<TodoDetailPage> {
               ),
 
               onPressed: () {
-                editAndSaveTodo();
+                editTodo();
               },
               icon: const Icon(Icons.save),
               label: const Text("저장하기"),
@@ -152,7 +154,7 @@ class _TodoDetailPageState extends ConsumerState<TodoDetailPage> {
                     maxLines: 3,
                     textInputAction: TextInputAction.done,
                     onSubmitted: (_) {
-                      editAndSaveTodo();
+                      editTodo();
                     },
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     decoration: InputDecoration(
@@ -173,7 +175,7 @@ class _TodoDetailPageState extends ConsumerState<TodoDetailPage> {
                           maxLines: 8,
                           textInputAction: TextInputAction.newline,
                           onSubmitted: (_) {
-                            editAndSaveTodo();
+                            editTodo();
                           },
                           decoration: InputDecoration(
                             hintStyle: TextStyle(fontSize: 14),
