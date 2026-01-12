@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:tasks/data/core/geolocator_helper.dart';
 import 'package:tasks/ui/pages/home/home_view_model.dart';
 import 'package:tasks/ui/pages/home/weather_info_view_model.dart';
 import 'package:tasks/ui/pages/home/widgets/empty_todo.dart';
@@ -28,6 +27,7 @@ class _HomePageState extends ConsumerState<HomePage>
 
   late final DateFormat _dateFormat;
   DateTime? _lastUpdated;
+  bool _justUpdated = false;
 
   @override
   void initState() {
@@ -39,13 +39,7 @@ class _HomePageState extends ConsumerState<HomePage>
   }
 
   Future<void> _loadLocation() async {
-    final position = await GeolocatorHelper.getPosition();
-
-    if (position != null) {
-      final viewModel = ref.read(weatherInfoViewModel.notifier);
-
-      viewModel.getWeatherInfo(position.latitude, position.longitude);
-    }
+    await ref.read(weatherInfoViewModel.notifier).updateWeather();
 
     setState(() {
       _lastUpdated = DateTime.now();
@@ -79,7 +73,7 @@ class _HomePageState extends ConsumerState<HomePage>
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
-            builder: (context) => PlusTodo(),
+            builder: (context) => WriteTodo(),
           );
         },
         child: Icon(Icons.add),
@@ -87,16 +81,25 @@ class _HomePageState extends ConsumerState<HomePage>
 
       bottomNavigationBar: HomeBottomBar(
         dateFormat: _dateFormat,
-        themeMode: widget.themeMode,
         lastUpdated: _lastUpdated,
-        onReload: () async {
-          await _loadLocation();
-        },
+        justUpdated: _justUpdated,
       ),
       body: RefreshIndicator(
         onRefresh: () async {
           await _loadLocation();
+
+          setState(() {
+            _justUpdated = true;
+          });
+
+          await Future.delayed(const Duration(seconds: 1));
+          if (!mounted) return;
+
+          setState(() {
+            _justUpdated = false;
+          });
         },
+
         child: homeState.isEmpty
             ? ListView(
                 physics: const AlwaysScrollableScrollPhysics(),

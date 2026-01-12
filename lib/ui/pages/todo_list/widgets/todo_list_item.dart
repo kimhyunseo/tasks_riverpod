@@ -91,7 +91,7 @@ class ToDoWidget extends ConsumerWidget {
                       actionLabel: "취소",
                       onAction: () {
                         final restoredTodo = deletedTodo.copyWith(id: '');
-                        vm.addTodo(todo: restoredTodo);
+                        vm.saveTodo(todo: restoredTodo);
                       },
                     );
                   },

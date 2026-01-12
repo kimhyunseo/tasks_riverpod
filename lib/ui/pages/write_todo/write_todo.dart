@@ -4,22 +4,22 @@ import 'package:tasks/data/model/todo_entity.dart';
 import 'package:tasks/ui/pages/home/home_view_model.dart';
 
 // 4. Todo를 추가하는 화면 만들기
-class PlusTodo extends ConsumerStatefulWidget {
-  const PlusTodo({super.key});
+class WriteTodo extends ConsumerStatefulWidget {
+  const WriteTodo({super.key});
   @override
-  ConsumerState<PlusTodo> createState() => _PlusTodoState();
+  ConsumerState<WriteTodo> createState() => _PlusTodoState();
 }
 
-class _PlusTodoState extends ConsumerState<PlusTodo> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
+class _PlusTodoState extends ConsumerState<WriteTodo> {
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
+  final FocusNode titleFocusNode = FocusNode();
+  final FocusNode descriptionFocusNode = FocusNode();
 
   bool isFavorite = false;
   bool isDescription = false;
   bool isTitleEmpty = true;
-
-  final FocusNode titleFocusNode = FocusNode();
-  final FocusNode descriptionFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -29,6 +29,15 @@ class _PlusTodoState extends ConsumerState<PlusTodo> {
         isTitleEmpty = titleController.text.trim().isEmpty;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    titleFocusNode.dispose();
+    descriptionFocusNode.dispose();
+    super.dispose();
   }
 
   void saveToDo() async {
@@ -41,7 +50,7 @@ class _PlusTodoState extends ConsumerState<PlusTodo> {
     }
 
     final viewModel = ref.read(homeViewModel.notifier);
-    await viewModel.addTodo(
+    await viewModel.saveTodo(
       todo: ToDoEntity(
         id: '',
         title: value,
@@ -53,15 +62,6 @@ class _PlusTodoState extends ConsumerState<PlusTodo> {
     if (mounted) {
       Navigator.pop(context);
     }
-  }
-
-  @override
-  void dispose() {
-    titleController.dispose();
-    descriptionController.dispose();
-    titleFocusNode.dispose();
-    descriptionFocusNode.dispose();
-    super.dispose();
   }
 
   @override
@@ -84,7 +84,7 @@ class _PlusTodoState extends ConsumerState<PlusTodo> {
             },
             minLines: 1,
             maxLines: 3,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               contentPadding: EdgeInsets.only(left: 20),
               hintText: "새 할 일",
               hintStyle: TextStyle(fontSize: 14),
@@ -133,7 +133,6 @@ class _PlusTodoState extends ConsumerState<PlusTodo> {
               ),
               Spacer(),
               TextButton(
-                // 4-2. 저장 버튼 요소가 있을 때만 활성화 (색상 차이 구현)
                 onPressed: isTitleEmpty ? null : saveToDo,
                 child: Text("저장"),
               ),

@@ -12,14 +12,16 @@ class HomeViewModel extends Notifier<List<ToDoEntity>> {
     return [];
   }
 
-  final todoRepo = Todorepository();
+  final todoRepo = TodoRepository();
 
+  // 모든 할 일 가져오기
   void getAllToDo() async {
     final todos = await todoRepo.getToDos();
     state = todos ?? [];
   }
 
-  Future<ToDoEntity?> addTodo({required ToDoEntity todo}) async {
+  // 할 일 저장
+  Future<ToDoEntity?> saveTodo({required ToDoEntity todo}) async {
     try {
       if (todo.id.isEmpty) {
         final docId = FirebaseFirestore.instance.collection('todos').doc().id;
@@ -42,28 +44,24 @@ class HomeViewModel extends Notifier<List<ToDoEntity>> {
       }
     } catch (e) {
       print('할 일 저장 실패: $e');
-      return null;
+      rethrow;
     }
   }
 
+  // 즐겨찾기 토글
   void toggleFavorite({required String id, required bool isFavorite}) async {
     try {
-      // 해당 todo 찾기
       final todo = state.firstWhere((t) => t.id == id);
-
-      // 전달받은 isFavorite 값으로 업데이트
       final updatedTodo = todo.copyWith(isFavorite: isFavorite);
-
-      // 서버 업데이트
       await todoRepo.updateToDo(todo: updatedTodo);
-
-      // 상태 업데이트
       state = state.map((t) => t.id == id ? updatedTodo : t).toList();
     } catch (e) {
       print('즐겨찾기 실패: $e');
+      rethrow;
     }
   }
 
+  // 완료 토글
   void toggleDone({required String id, required bool isDone}) async {
     try {
       final todo = state.firstWhere((t) => t.id == id);
@@ -74,9 +72,11 @@ class HomeViewModel extends Notifier<List<ToDoEntity>> {
       state = state.map((t) => t.id == id ? updatedTodo : t).toList();
     } catch (e) {
       print('완료 실패: $e');
+      rethrow;
     }
   }
 
+  //  할 일 삭제
   Future<void> deleteTodo({required String id}) async {
     try {
       await todoRepo.deleteToDo(id);
@@ -84,6 +84,7 @@ class HomeViewModel extends Notifier<List<ToDoEntity>> {
       state = state.where((t) => t.id != id).toList();
     } catch (e) {
       print('할 일 삭제 실패: $e');
+      rethrow;
     }
   }
 }
