@@ -21,20 +21,19 @@ class HomeViewModel extends Notifier<List<ToDoEntity>> {
   }
 
   /// 할 일 저장
-  Future<ToDoEntity?> saveTodo({required ToDoEntity todo}) async {
+  Future<void> saveTodo({required ToDoEntity todo}) async {
     try {
       final docId = FirebaseFirestore.instance.collection('todos').doc().id;
       final newTodo = todo.copyWith(id: docId);
       await todoRepo.addToDo(todo: newTodo);
       state = [...state, newTodo];
-      return newTodo;
     } catch (e) {
       print('할 일 저장 실패: $e');
       rethrow;
     }
   }
 
-  Future<ToDoEntity?> editTodo({required ToDoEntity todo}) async {
+  Future<void> editTodo({required ToDoEntity todo}) async {
     try {
       await todoRepo.updateToDo(todo: todo);
       state = state.map((t) {
@@ -44,7 +43,6 @@ class HomeViewModel extends Notifier<List<ToDoEntity>> {
           return t;
         }
       }).toList();
-      return todo;
     } catch (e) {
       print('할 일 수정 실패: $e');
       rethrow;
