@@ -34,13 +34,28 @@ UI와 비즈니스 로직을 분리했습니다.
 
 ## 📸 실행 화면 (Screenshots)
 
-Main & Weather View
+### Main & Weather View (Empty)
 
-Add Task (BottomSheet)
+<img width="410" height="857" alt="스크린샷 2026-01-12 오후 11 57 38" src="https://github.com/user-attachments/assets/7b5f98e9-800f-4a82-ae62-d48cff63d206" />
 
-Detail View & Edit
+<img width="410" height="857" alt="스크린샷 2026-01-12 오후 11 58 39" src="https://github.com/user-attachments/assets/33ce6df1-a9b0-480b-83da-79debef15ffb" />
 
-## Dark Mode
+
+
+### Add Task (BottomSheet)
+
+<img width="410" height="857" alt="스크린샷 2026-01-12 오후 11 57 46" src="https://github.com/user-attachments/assets/7b68a17b-84f2-41c7-a25e-d2ff91ab1770" />
+
+
+### Detail View & Edit
+
+<img width="410" height="857" alt="스크린샷 2026-01-12 오후 11 58 14" src="https://github.com/user-attachments/assets/d44efbd0-299d-4cda-a4b7-3af52ff65dca" />
+
+
+### Dark Mode
+
+<img width="410" height="857" alt="스크린샷 2026-01-12 오후 11 58 25" src="https://github.com/user-attachments/assets/1e638d62-c440-4faf-8e7e-1a213a7bb4f6" />
+
 
 ## 📂 폴더 구조 (Folder Structure)
 
@@ -91,7 +106,7 @@ lib/
 
 ## 기능 구현 상세 (Feature List)
 
-### 필수 기능 (Essential Features)
+### ✨ 필수 기능 (Essential Features)
 
 #### 1. MVVM 패턴 및 Riverpod 적용
 
@@ -111,7 +126,7 @@ lib/
 
 **DetailPage**: DetailPage: 할 일의 제목과 세부 정보를 수정할 수 있으며 상태 변경 시 메인 화면에 즉시 반영되도록 설계했습니다.
 
-### 도전 기능 및 추가 구현 (Challenge & Custom)
+### 💪 도전 기능 및 추가 구현 (Challenge & Custom)
 
 #### 1. 위치 기반 날씨 정보 (GPS & Weather API)
 
@@ -124,6 +139,8 @@ lib/
 **새로고침 인디케이터**: 메인 리스트를 아래로 당겨 데이터와 날씨를 수동 갱신할 수 있습니다.
 
 **삭제 취소 (Undo)**: 할 일 삭제 시 스낵바에 '취소' 버튼을 제공하여, 실수로 삭제한 데이터를 복구합니다.
+
+---
 
 ## 🚀 트러블 슈팅 (Trouble shooting)
 
